@@ -1,0 +1,28 @@
+version: '3.5'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dependency-base
+    working_dir: /usr/src/myapp
+    container_name: nest-container
+    restart: unless-stopped
+
+    volumes:
+      - ./:/usr/src/myapp
+
+    stdin_open: true
+    tty: true
+    ports:
+      - "${APP_PORT:-80}:3000"
+      - "${VITE_PORT:-24678}:24678"
+
+    networks:
+      - diego-network
+
+networks:
+  diego-network:
+    external:
+      name: diego-shared-network
