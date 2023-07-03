@@ -17,8 +17,33 @@ services:
     tty: true
     ports:
       - "${APP_PORT:-80}:3000"
-      - "${VITE_PORT:-24678}:24678"
+      - "${PRISMA_STUDIO_PORT:-5555}:5555"
+      - "9229:9229"
 
+    networks:
+      - diego-network
+
+  database:
+    image: postgres:13
+    container_name: pg_container
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123
+      POSTGRES_DB: nest
+    networks:
+      - diego-network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin4_container
+    restart: always
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
     networks:
       - diego-network
 
