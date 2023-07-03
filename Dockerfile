@@ -11,27 +11,3 @@ COPY package.json .
 COPY package-lock.json .
 RUN npm ci
 
-FROM dependency-base AS production-base
-
-# build will also take care of building
-# if necessary
-COPY . .
-RUN npm run build
-
-FROM $NODE_VERSION-slim AS production
-
-COPY --from=production-base /app/.output /app/.output
-
-# Service hostname
-ENV NUXT_HOST=0.0.0.0
-
-# Service version
-ARG NUXT_APP_VERSION
-ENV NUXT_APP_VERSION=${NUXT_APP_VERSION}
-
-# Run in production mode
-ENV NODE_ENV=production
-
-EXPOSE 3000
-# start the app
-CMD [ "node", "/app/.output/server/index.mjs" ]
